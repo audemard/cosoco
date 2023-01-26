@@ -17,11 +17,11 @@
 #include "restarts/Restart.h"
 
 namespace Cosoco {
-#define NBSTATS 4
-enum GlobalStats { rootPropagations, uselessFilterCalls, restarts, nogoods };
+#define NBSTATS 5
+enum GlobalStats { rootPropagations, uselessFilterCalls, restarts, nogoods, nbPickVars };
 
 #define NBLOCALSTATS 4
-enum OneRunStats { maxDepth, minDepth, sumDepth, nbConflicts };
+enum OneRunStats { maxDepth, minDepth, sumDepth, nbConflicts  };
 
 class Restart;
 class DecisionMarker;
@@ -195,6 +195,7 @@ class Solver : public AbstractSolver {
     void interrupt();   // Trigger a (potentially asynchronous) interruption of the solver.
 
     void setDecisionVariables(vec<Variable *> &vars);   // Set the decision variables
+    void printStatsPropagateCall(bool status, int b);
 };
 
 

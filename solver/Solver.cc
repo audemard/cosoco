@@ -374,13 +374,25 @@ Variable *Solver::pickInQueue() {   // Select the variable with the smallest dom
     queue.del(x);
     return x;
 }
-
+void Solver::printStatsPropagateCall(bool status, int b){
+    int after = 0;
+    for(Variable *x : problem.variables)
+        after += x->size();
+    printf("m %d %d %d %lu %lu %d\n", decisionLevel(), b, after, statistics[nbPickVars], filterCalls == 0 ? 0 : statistics[uselessFilterCalls] * 100 / filterCalls, status);
+}
 
 Constraint *Solver::propagate(bool startWithSATEngine) {
     currentFilteredConstraint = nullptr;
+    statistics[nbPickVars] = 0;
+    statistics[uselessFilterCalls] = 0;
+    filterCalls = 0;
+    int b = 0;
+    for(Variable *x : problem.variables)
+        b += x->size();
 
     while(queue.size() > 0) {
         Variable *x = pickInQueue();
+        statistics[nbPickVars]++;
         assert(x->size() > 0);
         for(Constraint *c : x->constraints) {
             if(x->timestamp > c->timestamp && isEntailed(c) == false) {
@@ -391,6 +403,7 @@ Constraint *Solver::propagate(bool startWithSATEngine) {
                     c->timestamp = ++timestamp;
                     notifyConflict(c);
                     currentFilteredConstraint = nullptr;
+                    printStatsPropagateCall(true, b);
                     return c;
                 }
                 currentFilteredConstraint = nullptr;
@@ -400,6 +413,7 @@ Constraint *Solver::propagate(bool startWithSATEngine) {
             }
         }
     }
+    printStatsPropagateCall(false, b);
     return nullptr;
 }
 
