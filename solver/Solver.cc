@@ -381,7 +381,10 @@ void Solver::printStatsPropagateCall(bool status, int b){
     printf("m %d %d %d %lu %lu %d\n", decisionLevel(), b, after, statistics[nbPickVars], filterCalls == 0 ? 0 : statistics[uselessFilterCalls] * 100 / filterCalls, status);
 }
 
+static int nb = 0;
 Constraint *Solver::propagate(bool startWithSATEngine) {
+    if(nb > 10000)
+        exit(1);
     currentFilteredConstraint = nullptr;
     statistics[nbPickVars] = 0;
     statistics[uselessFilterCalls] = 0;
